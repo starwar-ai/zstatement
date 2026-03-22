@@ -1,0 +1,31 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model BankTransaction {
+  id            Int     @id @default(autoincrement())
+  date          String
+  amount        Decimal
+  type          String  @default("支出")  // "收入" 或 "支出"
+  rowNo         String?
+  description   String?
+  accountingId  Int? @unique
+  accounting    AccountingEntry? @relation(fields: [accountingId], references: [id])
+  createdAt     DateTime @default(now())
+}
+
+model AccountingEntry {
+  id          Int     @id @default(autoincrement())
+  date        String
+  amount      Decimal
+  description String?
+  type        String
+  rowNo       String?
+  bankTransaction BankTransaction?
+  createdAt   DateTime @default(now())
+}
